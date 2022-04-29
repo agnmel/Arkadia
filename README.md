@@ -106,7 +106,7 @@ Jest tutaj piec widocznych wyjsc: dol, poludniowy-wschod, polnoc, gora i wschod.
 Masywna marmurowa plansza.
 ```
 ### Zasłanianie i wycofywanie się
-Klawisze `ALT` + `LICZBA` zasłaniają osobę, do której dana liczba jest przypisana w oknie kondycji. Możliwość zasłoniecia w ten sposób kończy się na dziewiątej osobie. Każda liczba jest obsługiwana również za pomocą aliasu `za [liczba]`, która nie ma wcześniej wspomnianego limitu. Alias nie przeszkadza podczas pisania listów.
+Klawisze `ALT` + `LICZBA` zasłaniają osobę, do której dana liczba jest przypisana w oknie kondycji. Możliwość zasłoniecia w ten sposób kończy się na dziewiątej osobie. Każda liczba jest obsługiwana również za pomocą aliasu `za [liczba]`, która nie ma wcześniej wspomnianego limitu. Jednocześnie działa obsługa komendy `za [osobe]`, która zadziała w ten sam sposób, czyli zasłaniając wskazaną osobę. Alias nie przeszkadza podczas pisania listów.
 
 Wymagania: `alias za zaslon`
 
