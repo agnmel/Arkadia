@@ -1,0 +1,1418 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<cmud>
+  <class name="Atakowanie">
+    <button autosize="false" width="39" height="23" autopos="false" left="-1" top="-2" toolbar="2" priority="750">
+      <caption>%case(@atak,A,AW,AWR,AWRP)</caption>
+      <value>#add atak 1
+#if (@atak &gt; 4 or @atak &lt;1) {atak = 1}</value>
+      <tooltip>A - atak, W - wskaz, R - rozkaz, P - przedstaw</tooltip>
+    </button>
+    <var name="atak">1</var>
+    <alias name="z">
+      <value>#switch (@atak)
+  (1) {#send z %-1}
+  (2) {#send z %-1;wskaz %-1 jako cel ataku}
+  (3) {#send z %-1;wskaz %-1 jako cel ataku;rozkaz wszystkim zabic %-1}
+  (4) {#send z %-1;wskaz %-1 jako cel ataku;rozkaz wszystkim zabic %-1;przedstaw %-1}</value>
+    </alias>
+  </class>
+  <class name="Bind">
+    <alias name="dodaj_bind">
+      <value>F12 = %1
+#say {%ansi(15) &gt;&gt; F12 - @F12}
+#key F12 {@F12;#key f12 {#say {%ansi(15) "&gt;&gt; F12 - Pusty bind"}};F12 = "Pusto!"}</value>
+    </alias>
+    <var name="F12" type="Literal">Pusto!</var>
+    <var name="q">Nie wiem, ustaw po raz pierwszy</var>
+    <trigger priority="3710">
+      <pattern>^Alias 'q' od teraz oznacza '(*)'.$</pattern>
+      <value>q = %1</value>
+    </trigger>
+    <macro key="F12">
+      <value>#say {%ansi(15) "&gt;&gt; F12 - Pusty bind"}</value>
+    </macro>
+    <class name="Podbindowane">
+      <trigger priority="2570">
+        <pattern>zapiera sie nogami o grunt i probuje uniesc * (%w).$</pattern>
+        <value>dodaj_bind "podnies "%1</value>
+      </trigger>
+      <trigger priority="3990">
+        <pattern>^Listy nieprzeczytane:$</pattern>
+        <value>dodaj_bind "przeczytaj list 1"</value>
+      </trigger>
+      <trigger priority="4820">
+        <pattern>przeciska sie przez (%w).$</pattern>
+        <value>dodaj_bind "przecisnij sie przez "%1</value>
+      </trigger>
+    </class>
+  </class>
+  <class name="Chodzenie">
+    <class name="Wlasne">
+      <trigger priority="3300">
+        <pattern>^{&gt; |}Wykonuje komende 'idz *'.$</pattern>
+        <trigger type="Within Lines" param="1" trigontrig="false">
+          <pattern>^{&gt; |}Ruszasz * na (*).$</pattern>
+          <value>#move @wyjscie_dlugie_na_krotkie(%1)</value>
+        </trigger>
+      </trigger>
+      <class name="Zwykle">
+        <macro key="KEY1">
+          <value>sw
+rewers = ne</value>
+        </macro>
+        <macro key="KEY2">
+          <value>s
+rewers = n</value>
+        </macro>
+        <macro key="KEY3">
+          <value>se
+rewers = nw</value>
+        </macro>
+        <macro key="KEY4">
+          <value>w
+rewers = e</value>
+        </macro>
+        <macro key="KEY6">
+          <value>e
+rewers = w</value>
+        </macro>
+        <macro key="KEY7">
+          <value>nw
+rewers = se</value>
+        </macro>
+        <macro key="KEY8">
+          <value>n
+rewers = s</value>
+        </macro>
+        <macro key="KEY9">
+          <value>ne
+rewers = sw</value>
+        </macro>
+        <macro key="SUB">
+          <value>u
+rewers = d</value>
+        </macro>
+        <macro key="ADD">
+          <value>d
+rewers = u</value>
+        </macro>
+      </class>
+      <var name="rewers">se</var>
+      <class name="Skradanie">
+        <macro key="ALT-KEY1">
+          <value>przemknij sw
+rewers = ne</value>
+        </macro>
+        <macro key="ALT-KEY2">
+          <value>przemknij s
+rewers = n</value>
+        </macro>
+        <macro key="ALT-KEY3">
+          <value>przemknij se
+rewers = nw</value>
+        </macro>
+        <macro key="ALT-KEY4">
+          <value>przemknij w
+rewers = e</value>
+        </macro>
+        <macro key="ALT-KEY6">
+          <value>przemknij e
+rewers = w</value>
+        </macro>
+        <macro key="ALT-KEY7">
+          <value>przemknij nw
+rewers = se</value>
+        </macro>
+        <macro key="ALT-KEY8">
+          <value>przemknij n
+rewers = s</value>
+        </macro>
+        <macro key="ALT-KEY9">
+          <value>przemknij ne
+rewers = sw</value>
+        </macro>
+        <macro key="ALT-SUB">
+          <value>przemknij u
+rewers = d</value>
+        </macro>
+        <macro key="ALT-ADD">
+          <value>przemknij d
+rewers = u</value>
+        </macro>
+        <alias name="przemknij">
+          <value>#send przemknij %1
+$kierunek = @wyjscie_dlugie_na_krotkie(%1)
+#move $kierunek</value>
+        </alias>
+      </class>
+    </class>
+    <class name="Za kims">
+      <trigger priority="8090">
+        <pattern>jedziesz * na ([^., ])</pattern>
+        <value>$kierunek = @wyjscie_dlugie_na_krotkie(%1)
+#move $kierunek</value>
+      </trigger>
+      <trigger priority="60">
+        <pattern>podazasz{| skradajac sie} za * {na|za|przez|do|w|w kierunku} ([^., ])</pattern>
+        <value>$kierunek = @wyjscie_dlugie_na_krotkie(%1)
+#move $kierunek</value>
+      </trigger>
+      <trigger priority="880">
+        <pattern>^{&gt; |}Wraz z * pomaga{cie|sz} * przeniesc * klatke (*).</pattern>
+        <value>$kierunek = @wyjscie_dlugie_na_krotkie(%1)
+#move $kierunek</value>
+      </trigger>
+    </class>
+    <func name="wyjscie_dlugie_na_krotkie">
+      <value>$a = %replace($a, "gora", "u")
+$a = %replace($a, "gore", "u")
+$a = %replace($a, "gory", "u")
+$a = %replace($a, "dol", "d")
+$a = %replace($a, "polnocny-zachod", "nw")
+$a = %replace($a, "polnocny-wschod", "ne")
+$a = %replace($a, "poludniowy-wschod", "se")
+$a = %replace($a, "poludniowy-zachod", "sw")
+$a = %replace($a, "poludnie", "s")
+$a = %replace($a, "polnoc", "n")
+$a = %replace($a, "zachod", "w")
+$a = %replace($a, "wschod", "e")
+$a = %replace($a, "wyjscia", "wyjscie")
+$a = %replace($a, "szczeliny", "szczelina")
+$a = %replace($a, "brame", "brama")
+$a = %replace($a, "zewnatrz", "wyjscie")
+$a = %replace($a, "ulice", "wyjscie")
+$a = %replace($a, "kladke", "kladka")
+$a = %replace($a, "otworu", "otwor")
+$a = %replace($a, "zajazdu", "zajazd")
+$a = %replace($a, "chatki", "chatka")
+$a = %replace($a, "klape", "klapa")
+$a = %replace($a, "namiotu", "namiot")
+$a = %replace($a, "chaty", "chata")
+$a = %replace($a, "kuzni", "kuznia")
+$a = %replace($a, "jadlodajni", "jadlodajnia")
+$a = %replace($a, "jaskini", "jaskinia")
+$a = %replace($a, "traktu", "trakt")
+$a = %replace($a, "obozu", "oboz")
+#return $a</value>
+      <arglist>$a</arglist>
+    </func>
+  </class>
+  <class name="Cofanie">
+    <trigger priority="2580">
+      <pattern>^Probujesz otworzyc *, ale nie udaje ci sie to.$</pattern>
+      <value>#move @rewers
+dodaj_bind "uderz w brame"</value>
+    </trigger>
+    <trigger priority="15200">
+      <pattern>^Jestes tak zmeczon{y|a}, ze nie mozesz {dalej podazac|isc} w tym kierunku.$</pattern>
+      <value>#move @rewers</value>
+    </trigger>
+    <trigger priority="2600">
+      <pattern>^Nie masz dalej wstepu.$</pattern>
+      <value>#move @rewers</value>
+    </trigger>
+    <trigger priority="2610">
+      <pattern>mowi do ciebie: Nikt z bronia nie wejdzie na teren *. Prosze zostawic ja na stojaku.$</pattern>
+      <value>#move @rewers</value>
+    </trigger>
+    <trigger priority="2620">
+      <pattern>^Drabina w tej chwili jest zajmowana przez kogos innego, musisz chwile poczekac, az sie zwolni.$</pattern>
+      <value>#move @rewers</value>
+    </trigger>
+    <trigger priority="2630">
+      <pattern>^Chcesz wpasc do rozpadliny~? Taka decyzje musisz potwierdzic.</pattern>
+      <value>#move @rewers</value>
+    </trigger>
+    <trigger priority="2640">
+      <pattern>^Nie mozesz sie tam udac, gdyz (*).$</pattern>
+      <value>#move @rewers
+#IF (%1 == "siedzisz") {dodaj_bind "wstan"}</value>
+    </trigger>
+    <trigger priority="2650">
+      <pattern>^Nie masz na to sily.$</pattern>
+      <value>#move @rewers</value>
+    </trigger>
+  </class>
+  <class name="Dzwieki">
+    <trigger priority="2730">
+      <pattern>atakuje cie!$</pattern>
+      <value>#play Dzwieki/atak.mp3</value>
+    </trigger>
+    <trigger priority="1">
+      <pattern>(*) przymierza sie do odciecia (*) drogi ucieczki.</pattern>
+      <value><![CDATA[#if (%2 = "ci")
+{
+ #play Dzwieki/blok.mp3
+ #say {%ansi(4)" >> "%upper(%1)" PROBUJE CIE BLOKOWAC"}
+ #alarm +3 {#say %ansi(4)" >> 2 SEKUNDY DO BLOKADY"}
+ #alarm +4 {#say %ansi(4)" >> 1 SEKUNDA DO BLOKADY"}
+ #alarm +6 {#say %ansi(15)" >> PO BLOKU"} 
+ }
+{
+ #play Dzwieki/blok2.mp3
+ }]]></value>
+    </trigger>
+    <trigger priority="1130">
+      <pattern>Trafiasz * {stopa|piescia|kolanem|lokciem} w *, lecz caly impet uderzenia zostaje wyparowany przez *.$</pattern>
+      <value>#play Dzwieki/brakbroni.wav</value>
+    </trigger>
+    <trigger priority="4040">
+      <pattern>{muskasz|ranisz|masakrujesz} * {stopa|piescia|kolanem|lokciem}, trafiajac {go|ja}</pattern>
+      <value>#play Dzwieki/brakbroni.wav</value>
+    </trigger>
+    <alias name="test_dzwiekow">
+      <value>#alarm +1 #sh Nadnaturalny dlugonogi pajak atakuje cie!
+#alarm +2 #sh Ktos przymierza sie do odciecia ci drogi ucieczki.
+#alarm +10 #sh Ataman przymierza sie do odciecia Ravisowi drogi ucieczki.
+#alarm +11 #sh Probujesz trafic szarego zwinnego wilka lewa piescia, lecz ten unika twojego ciosu.
+#alarm +12 #sh Masz nowa poczte od Sieryi.
+#alarm +13 #sh Jestes ledwo zywy.
+#alarm +14 #sh Opalizujacy runiczny topor obosieczny peka!
+#alarm +15 #sh Ciemnobrazowa krasnoludzka zbroja plytowa rozpada sie!
+#alarm +16 #sh Masywny okrutny mezczyzna rzuca sie na Geslera przebijajac sie przez jego ochrone.
+#alarm +17 #sh Daggerro szybkim niczym mysl ruchem ciernistej kobaltowej halabardy wytraca ci niezwykly kosciany topor z reki. Czujesz paralizujacy bol w wykreconych ciosem dloniach.
+#alarm +18 #sh Smukly drakkar przybija do brzegu.
+#alarm +19 #sh Musin wskazuje zlowrogiego ptakopodobnego mezczyzne jako cel ataku.
+#alarm +20 #sh Pospolita wezowata wiwerna umarla.</value>
+    </alias>
+    <trigger priority="4060">
+      <pattern>^Probujesz trafic (*) {stopa|piescia|kolanem|lokciem}, lecz {ten|ta} unika twojego ciosu.$</pattern>
+      <value>#play Dzwieki/brakbroni.wav</value>
+    </trigger>
+    <trigger priority="600">
+      <pattern>^Masz nowa poczte od *.$</pattern>
+      <value>dodaj_bind "wyslij zwierze"
+#play Dzwieki/list.mp3</value>
+    </trigger>
+    <trigger priority="400">
+      <pattern>^Jestes {ciezko ranny|ciezko ranna|ledwo zywa|ledwo zywy}.</pattern>
+      <value>#play Dzwieki/niskiehp.mp3</value>
+    </trigger>
+    <trigger priority="1300">
+      <pattern>peka!$</pattern>
+      <value>#play Dzwieki/pekniecie.mp3
+#say {%ansi(4) &gt;&gt; JAKAS BRON PEKLA}</value>
+    </trigger>
+    <trigger priority="1290">
+      <pattern>rozpada sie!$</pattern>
+      <value>#play Dzwieki/pekniecie.mp3
+#say {%ansi(4) &gt;&gt; JAKAS ZBROJA ROZPADLA SIE}</value>
+    </trigger>
+    <trigger priority="700">
+      <pattern>rzuca{|sz} sie na * przebijajac sie przez {jego|jej|twoja} ochrone.$</pattern>
+      <value>#play Dzwieki/przelamanie.mp3</value>
+    </trigger>
+    <trigger priority="1270">
+      <pattern>Czujesz paralizujacy bol w wykreconych ciosem dloniach.$</pattern>
+      <value>#play Dzwieki/rozbrojenie.mp3</value>
+    </trigger>
+    <trigger priority="710">
+      <pattern>przybija do brzegu.$</pattern>
+      <value>#play Dzwieki/statek.mp3</value>
+    </trigger>
+    <trigger priority="720">
+      <pattern>wskazuje{|sz} * jako cel ataku.$</pattern>
+      <value>#play Dzwieki/wskazanie.mp3</value>
+    </trigger>
+    <trigger priority="730">
+      <pattern>umarl{|a|o}.$</pattern>
+      <value>#play Dzwieki/zgon.mp3</value>
+    </trigger>
+  </class>
+  <class name="GPS (gmcp)">
+    <alias name="gps_tworz">
+      <value><![CDATA[#IF (@GMCP_ROOM_INFO.map) {
+  $koordynaty_gmcp = %concat( "Z", @GMCP_ROOM_INFO.map.id, "X", @GMCP_ROOM_INFO.map.x, "Y", @GMCP_ROOM_INFO.map.y) //sklejenie danych z gmcp
+  $numer_lokacji = %additem( %roomkey( )) //pobranie numeru lokacji z mapy
+  #IF (@TABELA_GPS.$koordynaty_gmcp) {
+    #ADDKEY TABELA_GPS $koordynaty_gmcp $numer_lokacji //dodawanie lokacji do tabelki
+    #PRINT ">> NADPISANO ODNIESIENIE W GPS"
+    } {
+      #ADDKEY TABELA_GPS $koordynaty_gmcp $numer_lokacji //dodawanie lokacji do tabelki
+      #PRINT ">> STWORZONO ODNIESIENIE W GPS"
+      }
+  } {
+  #PRINT ">> NIE ISTNIEJE GMCP DLA TEJ LOKACJI"
+}]]></value>
+    </alias>
+    <alias name="zlok">
+      <value><![CDATA[#IF (@GMCP_ROOM_INFO.map) {
+    $koordynaty_gmcp = %concat( "Z", @GMCP_ROOM_INFO.map.id, "X", @GMCP_ROOM_INFO.map.x, "Y", @GMCP_ROOM_INFO.map.y) //sklejenie danych z gmcp
+    $vnum = %additem( %roomkey( )) //pobranie numeru lokacji z mapy
+    $vnum2 = %db( @TABELA_GPS, $koordynaty_gmcp) //pobiernie numeru lokalizacji mapy z tabeli gmcp
+    #IF (@TABELA_GPS.$koordynaty_gmcp) {
+      #IF ($vnum = $vnum2) {
+        #PRINT ">> JESTES JUZ NA PRAWIDLOWEJ LOKACJI"
+      } {
+        #PRINT ">> PRZENOSZE NA POPRAWNA LOKACJE"
+        #TELEPORT $vnum2
+      }
+    } {
+      #PRINT ">> LOKACJA O TAKIM GMCP NIE ISTNIEJE JESZCZE W GPSIE"
+    }
+} {
+  #PRINT ">> NIE ISTNIEJE GMCP DLA TEJ LOKACJI"
+}]]></value>
+    </alias>
+    <var name="GMCP_ROOM_INFO" type="Record">
+      <value>exits=poludniowy-wschod</value>
+      <json>{"exits":["poludniowy-wschod"]}</json>
+    </var>
+    <trigger type="GMCP" priority="910">
+      <pattern>room.info</pattern>
+      <value>GMCP_ROOM_INFO = %null
+GMCP_ROOM_INFO = %json(%0)</value>
+    </trigger>
+    <var name="TABELA_GPS" type="Record">
+      <json>{}</json>
+    </var>
+  </class>
+  <class name="Klawisze">
+    <macro key="`">
+      <value>przestan zaslaniac</value>
+    </macro>
+    <macro key="F1">
+      <value>zabij cel ataku</value>
+    </macro>
+    <macro key="F2">
+      <value>przestan kryc sie za zaslona
+przelam obrone celu ataku
+zabij cel ataku</value>
+    </macro>
+    <macro key="DIV">
+      <value>stan</value>
+    </macro>
+    <macro key="MULT">
+      <value>k wszystkich</value>
+    </macro>
+    <macro key="KEY5">
+      <value>zerknij</value>
+    </macro>
+  </class>
+  <class name="Kolorowanie">
+    <class name="Artefakty">
+      <var name="kolor_artefaktu">#90EE90</var>
+      <trigger priority="160">
+        <pattern>snieznobial{y|ego|emu|ym|e} lsniac{y|ego|emu|y|ym|e} sztyle{t|tu|towi|tem|cie|ty}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="180">
+        <pattern>ogromn{y|ego|emu|ym|e} ognist{y|ego|emu|ym|e} trojz{ab|ebu|ebowi|ebem|ebie|eby}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="190">
+        <pattern>zdobion{a|ej|e} jasniejac{a|ej|e} wloczni{|a|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="200">
+        <pattern>opalizujac{y|ego|emu|ym|e} runiczn{y|ego|emu|ym|e} topor{|a|owi|em|ze|y} obosieczn{y|ego|emu|ym|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="210">
+        <pattern>kunsztown{y|ego|emu|ym|e} mithrylow{y|ego|emu|ym|e} topor{|a|owi|em|ze|y} bojow{y|ego|emu|ym|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="220">
+        <pattern>niezwykl{y|ego|emu|ym|e} koscian{y|ego|emu|ym|e} topor{|a|owi|em|ze|y}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="230">
+        <pattern>poszczerbion{y|ego|emu|ym|e} obureczn{y|ego|emu|ym|e} miecz{|a|owi|em|u|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="240">
+        <pattern>polyskliw{y|ego|emu|ym|e} smukl{y|ego|emu|ym|e} espadon{|a|owi|em|ie|y}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="250">
+        <pattern>rezonujac{y|ego|emu|ym|e} krysztalow{y|ego|emu|ym|e} mlo{t|ta|towi|tem|cie|ty}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="260">
+        <pattern>lodowat{a|ej|e} dlug{a|iej|ie} maczu{ga|gi|dze|ge}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="270">
+        <pattern>czarnoblekitn{y|ego|emu|ym|e} pulsujac{y|ego|emu|ym|e} morgenstern{|a|owi|em|ie|y}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="290">
+        <pattern>niebieskaw{a|ej|e} zdobion{a|ej|e} bulaw{a|y|ie|e|y}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="300">
+        <pattern>ciemnogranatow{y|ego|emu|ym|e} smukl{y|ego|emu|ym|e} helm{|u|owi|em|ie|y}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="310">
+        <pattern>czarn{y|ego|emu|ym|e} zdobion{y|ego|emu|ym|e} helm{|u|owi|em|ie|y}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="320">
+        <pattern>strzelist{y|ego|emu|ym|e} zasniedzial{y|ego|emu|ym|e} helm{|u|owi|em|ie|y}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="330">
+        <pattern>niewielki{|ego|emu|m|e} krwawnikow{y|ego|emu|ym|e} pierscien{|ia|iowi|iem|iu|ie}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="340">
+        <pattern>grub{a|ej|e} czarn{a|ej|e} opas{ka|ki|ce|ke} z kolcami</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="350">
+        <pattern>dlug{a|iej|ie} krasnoludzk{a|iej|ie} bajdan{a|y|ie|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="360">
+        <pattern>starozytn{a|ej|e} runiczn{a|ej|e} zbro{ja|i|je} plytow{a|ej|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="370">
+        <pattern>lsniac{a|ej|e} plomienist{a|ej|e} tarcz{a|y|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="380">
+        <pattern>snieznobial{y|ego|emu|ym|e} luskow{y|ego|emu|ym|e} pancerz{|a|owi|em|u|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="390">
+        <pattern>mistern{a|ej|e} spizow{a|ej|e} pawez{|y|a|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="400">
+        <pattern>szar{a|ej|e} wygodn{a|ej|e} par{a|y|ze|e|y} butow</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="410">
+        <pattern>masywn{y|ego|emu|ym|e} oksydowan{y|ego|emu|ym|e} pas{|a|owi|em|ie|y}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="420">
+        <pattern>masywn{y|ego|emu|ym|e} amule{t|tu|towi|tem|cie|ty} z czarnym opalem</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="430">
+        <pattern>lsniac{y|ego|emu|ym|e} krysztalow{y|ego|emu|ym|e} wisior{|a|owi|em|ze|y}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="440">
+        <pattern>niepozorn{y|ego|emu|ym|e} barwn{y|ego|emu|ym|e} pierscien{|ia|iowi|iem|iu|ie}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="450">
+        <pattern>szkarlatn{y|ego|emu|ym|e} ciernist{y|ego|emu|ym|e} pierscien{|ia|iowi|iem|iu|ie}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="460">
+        <pattern>czarn{y|ego|emu|ym|e} prost{y|ego|emu|ym|e} diadem{|u|owi|em|ie|y}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="470">
+        <pattern>ciezki{|ego|emu|m|ie} krwist{y|ego|emu|ym|e} amule{t|tu|towi|tem|cie|y}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="480">
+        <pattern>zdobion{y|ego|emu|ym|e} zlot{y|ego|emu|ym|e} pierscien{|ia|iowi|iem|iu|ie}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="490">
+        <pattern>osobliw{y|ego|emu|ym|e} szklan{y|ego|emu|ym|e} pierscien{|ia|iowi|iem|iu|ie}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="500">
+        <pattern>matow{a|ej|e} kul{ka|ki|ce|ke}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="510">
+        <pattern>krysztalow{a|ej|e} karaf{ka|ki|ce|ke}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="1030">
+        <pattern>azurow{y|ego|emu|ym|e} koscistobial{y|ego|emu|ym|e} amule{t|tu|towi|tem|cie|y}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="3930">
+        <pattern>bialoblekitn{a|ej|e} smocz{a|ej|e} zbro{ja|i|je}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="3940">
+        <pattern>adamantytow{y|ego|emu|ym|e} mlo{t|ta|towi|tem|cie|ty} bojow{y|ego|emu|ym|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="3950">
+        <pattern>archaiczn{y|ego|emu|ym|e} zdobion{y|ego|emu|ym|e} topor{|a|owi|em|ze|y}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="3960">
+        <pattern>lodow{y|ego|emu|ym|e} lsniac{y|ego|emu|ym|e} sztyle{t|tu|towi|tem|cie|ty}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="3970">
+        <pattern>zdobion{y|ego|emu|ym|e} dlugi{|ego|emu|m|e} lewak{|a|owi|iem|u|i}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="4810">
+        <pattern>zielon{y|ego|emu|ym|e} luskowat{y|ego|emu|ym|e} plaszcz{|a|owi|em|u|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="4820">
+        <pattern>pozlacan{e|ych|ym|ymi|ych} okular{y|ow|om|y|ami|ach} z niebieskawych szkielek</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="4830">
+        <pattern>srebrnozlot{y|ego|emu|ym|e} paskow{y|ego|emu|ym|e} pancerz{|a|owi|em|u|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="4840">
+        <pattern>srebrzyst{y|ego|emu|ym|e} wulkaniczn{y|ego|emu|ym|e} kindzal{|u|owi|em|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="4850">
+        <pattern>egzotyczn{y|ego|emu|ym|e} jadeitow{y|ego|emu|ym|e} palasz{|a|owi|em|u|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="4880">
+        <pattern>szkarlatn{a|ej|e} rogat{a|ej|e} tarcz{a|y|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="4890">
+        <pattern>blekitno-srebrn{a|ej|e} trojkatn{a|ej|e} tarcz{a|y|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="4900">
+        <pattern>adamantytow{a|ej|e} szpiczast{a|ej|e} partyzan{a|y|ie|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="6150">
+        <pattern>ornamentowan{y|ego|emu|ym|e} kruczoczarn{y|ego|emu|ym|e} helm{|u|owi|em|ie|y} wielki{|ego|emu|m|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="6160">
+        <pattern>foremn{y|ego|emu|ym|e} iskrzac{y|ego|emu|ym|e} mlo{t|ta|towi|tem|cie|ty}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="6620">
+        <pattern>krysztalow{y|ego|emu|ym|e} swietlist{y|ego|emu|ym|e} korbacz{|a|owi|em|u|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="6710">
+        <pattern>asymetryczn{y|ego|emu|ym|e} wulkaniczn{y|ego|emu|ym|e} mlo{t|ta|towi|tem|cie|ty}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="6790">
+        <pattern>lekk{a|iej|ie} lsniac{a|ej|e} bransole{ta|ty|cie|te|ty}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="6800">
+        <pattern>szylkretow{y|ego|emu|ym|e} falist{y|ego|emu|ym|e} sztyle{t|tu|towi|tem|cie|ty}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="6830">
+        <pattern>antyczn{y|ego|emu|ym|e} zdobion{y|ego|emu|ym|e} sztyle{t|tu|towi|tem|cie|ty}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="6840">
+        <pattern>zdobion{y|ego|emu|ym|e} jasniejac{y|ego|emu|ym|e} chepesz{|a|owi|em|u|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="6850">
+        <pattern>waski{|ego|emu|m|e} kunsztown{y|ego|emu|ym|e} sihill{|a|owi|em|u}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="6860">
+        <pattern>gigantyczn{y|ego|emu|ym|e} granitow{y|ego|emu|ym|e} mlo{t|ta|towi|tem|cie|ty}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="6870">
+        <pattern>czarn{y|ego|emu|ym|e} zdobion{y|ego|emu|ym|e} amule{t|tu|towi|tem|cie|y}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="6880">
+        <pattern>mistern{y|ego|emu|ym|e} obosieczn{y|ego|emu|ym|e} topor{|a|owi|em|ze|y}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="7060">
+        <pattern>srebrzyst{a|ej|e} kos{a|y|ie|e} bojow{a|ej|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="7070">
+        <pattern>niewielki{|ego|emu|m|e} zmatowial{y|ego|emu|ym|e} pierscien{|ia|iowi|iem|iu|ie}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="7080">
+        <pattern>masywn{y|ego|emu|ym|e} wyszczerbion{y|ego|emu|ym|e} tasak{|a|owi|iem|u|i}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="7090">
+        <pattern>mistern{y|ego|emu|ym|e} snieznobial{y|ego|emu|ym|e} harpun{|a|owi|em|ie}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="7100">
+        <pattern>ciernist{a|ej|e} kobaltow{a|ej|e} halabard{a|y|zie|e|y}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="7110">
+        <pattern>dlugi{|ego|emu|m|e} runiczn{y|ego|emu|ym|e} korbacz{|a|owi|em|u}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="7180">
+        <pattern>owadzioksztaltn{y|ego|emu|ym|e} brazow{y|ego|emu|ym|e} helm{|u|owi|em|ie|y}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="7370">
+        <pattern>krasnoludzk{a|iej|e} starozytn{a|ej|e} koron{a|y|ie|e|y}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="7720">
+        <pattern>okragl{y|ego|emu|ym|e} migotliw{y|ego|emu|ym|e} puklerz{|e|em|a|u}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="5520">
+        <pattern>Na czarnych niczym noc plytach twojego starozytnego pancerza co chwile rozblyskuja tajemnicze runy.</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="3730">
+        <pattern>jasniejac{y|ego|emu|ym} zdobion{y|ego|emu|ym} jatagan{|a|owi|em|ie}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="3740">
+        <pattern>zdobion{y|ego|emu|ym} jasniejac{y|ego|emu|ym} mlo{t|ta|towi|tem|cie}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="3750">
+        <pattern>czerwon{a|ej} skrzydlat{a|ej} par{a|y|e|ze} nareczakow</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="3760">
+        <pattern>azurow{y|ego|emu|ym} polyskujac{y|ego|emu|ym} amule{t|tu|towi|tem|cie} z wielobarwnego koralu</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="5150">
+        <pattern>niematerialn{y|ego|emu|ym|e} ulotn{y|ego|emu|ym|e} szamszir{|a|u|owi|em}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="5280">
+        <pattern>kunsztown{y|ego|emu|ym|e} lekki{|ego|emu|m|e} pancerz{|a|owi|em|u|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="2270">
+        <pattern>star{y|ego|emu|ym|e} matow{y|ego|emu|ym|e} pancerz{|a|owi|em|u|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="2280">
+        <pattern>koscian{y|ego|emu|ym|e} kilof{|a|owi|em|ie|y}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="4180">
+        <pattern>szmaragdowozielon{y|ego|emu|ym|e} mistern{y|ego|emu|ym|e} plaszcz{|a|owi|em|u|e}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+      <trigger priority="4190">
+        <pattern>dlug{a|iej|e} czarn{a|ej|e} sza{ta|ty|cie|te|ty}</pattern>
+        <value>#cw @kolor_artefaktu</value>
+      </trigger>
+    </class>
+    <class name="Klucze">
+      <var name="kolor_klucza">#EE752C</var>
+      <class name="Imperium">
+        <trigger priority="4780">
+          <pattern>lsniac{y|ego|emu|ym|e} zelazn{y|ego|emu|ym|e} klucz{|a|owi|em|u|e}</pattern>
+          <value>#cw @kolor_klucza
+// Nekromata</value>
+        </trigger>
+        <trigger priority="6640">
+          <pattern>duz{y|ego|emu|ym|e} stalow{y|ego|emu|ym|e} klucz{|a|owi|em|u|e}</pattern>
+          <value>#cw @kolor_klucza</value>
+        </trigger>
+        <trigger priority="6650">
+          <pattern>grafitow{y|ego|emu|ym|e} jezyk{|a|owi|iem|u|i} klucza</pattern>
+          <value>#cw @kolor_klucza</value>
+        </trigger>
+        <trigger priority="6660">
+          <pattern>grafitow{a|ej|e} czesc{|i|ia} klucza</pattern>
+          <value>#cw @kolor_klucza</value>
+        </trigger>
+        <trigger priority="6670">
+          <pattern>niewielk{a|ej|iej|ie} dziesiecioramienn{a|ej|e} gwi{azda|azdy|ezdzie|azde|azdy} z mosiadzu</pattern>
+          <value>#cw @kolor_klucza
+// Mumia</value>
+        </trigger>
+        <trigger priority="6680">
+          <pattern>grafitow{e|ego|emu|ym} u{cho|cha|chu|cho|chem|szy} klucza</pattern>
+          <value>#cw @kolor_klucza</value>
+        </trigger>
+        <trigger priority="6690">
+          <pattern>duz{y|ego|emu|ym|e} pordzewial{y|ego|emu|ym|e} klucz{|a|owi|em|u|e}</pattern>
+          <value>#cw @kolor_klucza
+// Utopce</value>
+        </trigger>
+        <trigger priority="6700">
+          <pattern>podluzn{y|ego|emu|ym|e} srebrn{y|ego|emu|ym|e} kluczyk{|a|owi|iem|u}</pattern>
+          <value>#cw @kolor_klucza
+// Demon</value>
+        </trigger>
+        <trigger priority="6760">
+          <pattern>nieduz{y|ego|emu|ym|e} klucz{|a|owi|em|u|e} z herbem</pattern>
+          <value>#cw @kolor_klucza
+// Blekitnokrwisci</value>
+        </trigger>
+        <trigger priority="6820">
+          <pattern>wielobarwn{y|ego|emu|ym|e} orcz{y|ego|emu|ym|e} fetysz{|u|owi|em|e}</pattern>
+          <value>#cw @kolor_klucza
+// Trolle opalowe</value>
+        </trigger>
+        <trigger priority="7190">
+          <pattern>mosiezn{y|ego|emu|ym|e} krasnoludzki{|ego|emu|m|e} klucz{|a|owi|em|u|e} ze zdobieniami</pattern>
+          <value>#cw @kolor_klucza
+// Warownia Ztkow</value>
+        </trigger>
+        <trigger priority="7380">
+          <pattern>mosiezn{y|ego|emu|ym|e} wielki{|ego|emu|m|e} klucz{|a|owi|em|u|e}</pattern>
+          <value>#cw @kolor_klucza
+// Kasztel</value>
+        </trigger>
+        <trigger priority="4200">
+          <pattern>zardzewial{y|ego|emu|ym|e} duz{y|ego|emu|ym|e} klucz{|a|owi|em|u}</pattern>
+          <value>#cw @kolor_klucza
+// Demonica z Quenelles</value>
+        </trigger>
+        <trigger priority="4210">
+          <pattern>duz{y|ego|emu|ym|e} ciezki{|ego|emu|m|e} klucz{|a|owi|em|u|e}</pattern>
+          <value>#cw @kolor_klucza
+// Zajazd Seth'a</value>
+        </trigger>
+      </class>
+      <class name="Ishtar">
+        <trigger priority="4870">
+          <pattern>zlot{y|ego|emu|ym|e} klucz{|a|owi|em|u|e}</pattern>
+          <value>#cw @kolor_klucza
+// Brokilion</value>
+        </trigger>
+        <trigger priority="6780">
+          <pattern>fragmen{t|tu|towi|tem|cie} koralowej plaskorzezby z rybim ogonem</pattern>
+          <value>#cw @kolor_klucza
+// Ryboludzie</value>
+        </trigger>
+        <trigger priority="7170">
+          <pattern>dlugi{|ego|emu|m|e} skomplikowan{y|ego|emu|ym|e} klucz{|a|owi|em|u|e}</pattern>
+          <value>#cw @kolor_klucza
+// Wieza zywiolakow</value>
+        </trigger>
+        <trigger priority="2290">
+          <pattern>grub{y|ego|emu|ym|e} ciezki{|ego|emu|m|e} klucz{|a|owi|em|u}</pattern>
+          <value>#cw @kolor_klucza
+// Kurhan, Lyria</value>
+        </trigger>
+      </class>
+      <trigger priority="6630">
+        <pattern>zamkniet{a|ej|e} smocz{a|ej|e} szkatul{ka|ki|ce|ke}</pattern>
+        <value>#cw @kolor_klucza</value>
+      </trigger>
+      <trigger priority="6770">
+        <pattern>zamkniete grawerowane podluzne pudelko</pattern>
+        <value>#cw @kolor_klucza</value>
+      </trigger>
+      <trigger priority="7050">
+        <pattern>skomplikowan{y|ego|emu|ym|e|ych} klucz{|a|owi|em|u|e|y} ze szklanym zbiorniczkiem</pattern>
+        <value>#cw @kolor_klucza</value>
+      </trigger>
+    </class>
+  </class>
+  <class name="Licznik postepow">
+    <trigger priority="4270">
+      <pattern>^Poczynil{as|es} (*) postepy, od momentu kiedy {weszlas|wszedles} do gry.</pattern>
+      <value>#if (%1 != @stary_postep) {
+  $nowy_czas = %eval((%time(hh)*3600)+(%time(nn)*60)+%time(ss))
+  $miedzy_czas = %eval($nowy_czas-@stary_czas)
+  #if ($miedzy_czas &lt; 0) {
+    $miedzy_czas = %eval($miedzy_czas+86400)
+  }
+  $minuty = $miedzy_czas/60 
+  $sekundy = %mod($miedzy_czas, 60)
+  $godziny = $minuty/60
+  $minuty = %mod($minuty, 60)
+  #sub {%ansi(8)Zmiana: %upper(%1), wyexpione w czasie: $godziny h, $minuty min, $sekundy s}
+  #addkey postepy {%time("yyyy-mm-dd hh:nn:ss") @dodanie_zera($godziny):@dodanie_zera($minuty):@dodanie_zera($sekundy)} %1
+  stary_postep = %1
+  stary_czas = $nowy_czas
+} {
+  $czas_bez_zmian = %time("hh")*60*60 + %time("nn")*60 + %time("ss")
+  $sekundy = %eval($czas_bez_zmian-@stary_czas)
+  #if ($sekundy &lt; 0) {
+    $sekundy = %eval($sekundy+86400)
+  }
+  $minuty = $sekundy/60 
+  $sekundy = %mod($sekundy, 60)
+  $godziny = $minuty/60
+  $minuty = %mod($minuty, 60)
+  #sub {%ansi(8)Postepy: %upper(%1), jestes na nich: $godziny h, $minuty min, $sekundy s} 
+  }</value>
+    </trigger>
+    <var name="stary_czas" type="Integer">66764</var>
+    <var name="stary_postep" type="Literal">minimalne</var>
+    <var name="postepy" type="Record">
+      <json>{}</json>
+    </var>
+    <trigger priority="4130">
+      <pattern>^Ostatnie logowanie:</pattern>
+      <value>stary_postep = "minimalne"
+stary_czas = %eval((%time(hh)*3600)+(%time(nn)*60)+%time(ss))</value>
+    </trigger>
+    <func name="dodanie_zera">
+      <value>#if (%1 &lt; 10) {#return "0"%1} {#return %1}</value>
+    </func>
+    <alias name="moje_postepy">
+      <value>#sh "Data       Godzina  Czas      Postep"
+#showdb @postepy</value>
+    </alias>
+  </class>
+  <class name="Monety">
+    <var name="miedz_na_monety">%ansi( 15)%if( %eval( %1/24000), %concat( %eval( %1/24000), "mt "))%ansi( 14)%if( %eval( %mod( %1, 24000)/240), %concat( %eval( %mod( %1, 24000)/240), "zl "))%ansi( 7)%if( %eval( %mod( %mod( %1, 24000), 240)/12), %concat( %eval( %mod( %mod( %1, 24000), 240)/12), "sr "))%ansi( 6)%if( %mod( %mod( %mod( %1, 24000), 240), 12), %concat( %mod( %mod( %mod( %1, 24000), 240), 12), "md "))%ansi( reset)</var>
+    <trigger priority="5330">
+      <pattern>Jest tu (*) sztuk wartych (%d) (*).$</pattern>
+      <value>#sub {Jest tu %1 sztuk warte %2 %3 = [ @miedz_na_monety(%2)]}</value>
+    </trigger>
+    <trigger>
+      <pattern>Sa tu (*) sztuki warte (%d) (*).$</pattern>
+      <value>#sub {Sa tu %1 sztuki warte %2 %3 = [ @miedz_na_monety(%2)]}</value>
+    </trigger>
+    <trigger>
+      <pattern>Wydaje ci sie, ze jest (*) okolo (%d) (*).$</pattern>
+      <value>#sub {Wydaje ci sie, ze jest %1 okolo %2 %3 = [ @miedz_na_monety(%2)]}</value>
+    </trigger>
+  </class>
+  <class name="Obsluga okna kondycji">
+    <func name="uaktualnij_kondycje">
+      <value><![CDATA[#execwin kondycje {#clr}
+$kwinYou = %null
+$kwinTeam = %null
+$kwinEnemy = %null
+$kwinRest = %null
+$t_counter = 1
+$e_counter = 1
+
+$updateFight = 0
+fightAttack = %null
+#LOOPDB @GMCP_OBJECTS_DATA
+{
+  $val = %val.attack_num
+    
+  #IF ($val = "false")
+  {
+    #IF (%iskey(@fightAttack, %key))
+    {
+      #DELKEY fightAttack %key      
+    }
+    
+    #CONTINUE
+  }
+  
+  #IF (%db(@fightAttack, %key) != $val)
+  {
+    #ADDKEY fightAttack %key $val
+  }
+}
+
+fightAttackedBy = %null
+#LOOPDB @fightAttack
+{
+  #addkey fightAttackedBy %val %additem(%key, %db(@fightAttackedBy, %val))
+}
+
+#LOOPDB @GMCP_OBJECTS_DATA
+{
+  $jaka = %val.hp + 1
+  $atakuja = %db(@fightAttackedBy, %key)
+  $ile = %numitems($atakuja)
+  $sub = "["$ile"]["%if( $jaka = 7, %repeat( "#", 6)"#", %repeat( "#", $jaka)%repeat( "-", 6-$jaka)"-")"] "
+  $atakujaOpisy = %null
+  $atakujaSub = %null
+  
+  #if ($ile)
+  {
+    #forall $atakuja
+    {
+      $desc = @GMCP_OBJECTS_DATA.%i.desc
+      
+      $atakujaOpisy = %additem(%if($desc, $desc, "ty"), $atakujaOpisy)
+    }
+    
+    $atakujaSub = "<== "%expandlist($atakujaOpisy, ", ")
+  }
+    
+  #if (%val.avatar = "true") {
+    $sub = %ansi( @kolor_z_kondycji( $jaka/2))$sub"<send 'rozkaz wszystkim zaslonic ciebie;wskaz siebie jako cel obrony' 'rozkaz zaslonic'>"Ty"</send> "$atakujaSub
+    $kwinYou = $sub
+    #CONTINUE
+    }
+  #if (%val.team = "true")
+  {
+    $sub = %ansi( @kolor_z_kondycji( $jaka/2))$sub$t_counter" <send 'zaslon ob_"%key"|rozkaz wszystkim zaslonic ob_"%key";wskaz ob_"%key" jako cel obrony|wycofaj sie za ob_"%key"|ob ob_"%key"|porownaj sile z ob_"%key";porownaj zrecznosc z ob_"%key";porownaj wytrzymalosc z ob_"%key"' 'zaslon|rozkaz zaslonic|wycofaj sie za|obejrzyj|porownaj'>"%proper( %val.desc)"</send> "$atakujaSub
+    #additem $kwinTeam $sub
+    #CALL @utworz_makra("team", %key, $t_counter)
+    $t_counter = $t_counter + 1;
+    #CONTINUE
+    }
+  #if (%val.enemy = "true")
+  {
+    $sub = %ansi( @kolor_z_kondycji( $jaka/2))$sub$e_counter" <send 'ob ob_"%key"|porownaj sile z ob_"%key";porownaj zrecznosc z ob_"%key";porownaj wytrzymalosc z ob_"%key"|zabij ob_"%key"|przelam obrone ob_"%key"|rozkaz wszystkim zaatakowac ob_"%key";wskaz ob_"%key" jako cel ataku|zaslon przed ob_"%key"|zablokuj ob_"%key"' 'obejrzyj|porownaj|zabij|przelam|rozkaz zaatakowac|zaslon przed|zablokuj'>"%proper( %val.desc)"</send> "$atakujaSub
+    #additem $kwinEnemy $sub
+    
+    #CALL @utworz_makra("enemy", %key, $e_counter)
+    $e_counter = $e_counter + 1;    
+    #CONTINUE
+    }  
+  $sub = %ansi( @kolor_z_kondycji( $jaka/2))$sub"<send 'ob ob_"%key"|porownaj sile z ob_"%key";porownaj zrecznosc z ob_"%key";porownaj wytrzymalosc z ob_"%key"|zabij ob_"%key"|przelam obrone ob_"%key"|rozkaz wszystkim zaatakowac ob_"%key";wskaz ob_"%key" jako cel ataku|zaslon przed ob_"%key"|zablokuj ob_"%key"' 'obejrzyj|porownaj|zabij|przelam|rozkaz zaatakowac|zaslon przed|zablokuj'>"%proper( %val.desc)"</send> "$atakujaSub
+  #additem $kwinRest $sub
+  }
+  
+#win "kondycje" $kwinYou
+#if ($kwinTeam) {#win "kondycje" %ansi(7)"-D----------"}
+#forall {$kwinTeam} {#win "kondycje" %i}
+#if ($kwinEnemy) {#win "kondycje" %ansi(7)"-W----------"}
+#forall {$kwinEnemy} {#win "kondycje" %i}
+#if ($kwinRest) {#win "kondycje" %ansi(7)"-P----------"}
+#forall {$kwinRest} {#win "kondycje" %i}]]></value>
+    </func>
+    <func name="kolor_z_kondycji">
+      <value>#if ($a == 3) {#return green}
+#if ($a == 2) {#return yellow}
+#if ($a == 1) {#return red}
+
+#return red</value>
+      <arglist>$a</arglist>
+    </func>
+    <trigger type="GMCP" priority="2620">
+      <pattern>objects</pattern>
+      <value>#if (%gmcp.message = "nums")
+{
+  $update = 0;
+  GMCP_OBJECTS_NUMS = %json(%0)
+  
+  #LOOPDB @GMCP_OBJECTS_DATA
+  {
+    #if (%ismember(%key, @GMCP_OBJECTS_NUMS) = 0)
+    {
+      #DELKEY GMCP_OBJECTS_DATA %key
+      $update = 1
+    }
+  }
+  
+  #IF ($update = 1)
+  {
+    #CALL @uaktualnij_kondycje()
+  }
+  
+  #exit
+}
+
+#if (%gmcp.message = "data")
+{
+  $data = %JSON(%0)
+  
+  #LOOPDB ($data)
+  {
+    #IF (%iskey(@GMCP_OBJECTS_DATA, %key))
+    {
+      #ADDKEY @GMCP_OBJECTS_DATA.%key $data.%key
+    }
+    {
+      #ADDKEY @GMCP_OBJECTS_DATA %key %val
+    }
+  }
+  
+  #CALL @uaktualnij_kondycje()
+  
+  #exit
+}</value>
+    </trigger>
+    <var name="GMCP_OBJECTS_DATA" type="Record">
+      <value>1885815="editing=false|living=true|paralyzed=false|can_see_in_room=true|attack_num=false|avatar=true|hidden=false|defense_target=false|hp=6|team=false|team_leader=false"</value>
+      <json>{"1885815":{"avatar":true,"can_see_in_room":true,"editing":false,"team_leader":"false","living":true,"defense_target":"false","hp":6,"hidden":false,"team":"false","attack_num":false,"paralyzed":"false"}}</json>
+    </var>
+    <var name="GMCP_OBJECTS_NUMS" type="StringList">
+      <value>1885815</value>
+      <json>[1885815]</json>
+    </var>
+    <var name="fightAttack"/>
+    <var name="fightAttackedBy"/>
+    <func name="utworz_makra">
+      <value>$key = %null
+$value = %null
+
+#switch ($typ) 
+  ("team") {
+  #ADDKEY druzyna $id $num
+  $key = "CTRL-"$id
+  $val = "wycofaj sie za ob_"$num
+  #KEY {$key} {$val}
+  $key = "ALT-"$id
+  $val = "zaslon ob_"$num
+  #KEY {$key} {$val}
+  } </value>
+      <arglist>$typ, $num, $id</arglist>
+    </func>
+  </class>
+  <class name="Obsluga paska stanow">
+    <button type="Gauge" variable="@gmcp_hp" autosize="false" width="180" height="23" toolbar="2" inset="true" toolstyle="true" color="#339966" gaugelowcol="red" gaugebackcol="silver" priority="3">
+      <caption>Hp: @gmcp_hp_opis</caption>
+      <expr>@gmcp_hp</expr>
+      <gaugemax>6</gaugemax>
+      <gaugelow>3</gaugelow>
+    </button>
+    <button type="Gauge" variable="@gmcp_encumbrance" autosize="false" width="180" height="23" toolbar="2" inset="true" toolstyle="true" stack="true" color="red" gaugelowcol="#FF99CC" gaugebackcol="silver" priority="42">
+      <caption>Obciazenie: @gmcp_encumbrance_opis</caption>
+      <expr>@gmcp_encumbrance</expr>
+      <gaugemax>6</gaugemax>
+      <gaugelow>4</gaugelow>
+    </button>
+    <button type="Gauge" variable="10 - @gmcp_fatigue" autosize="false" width="180" height="23" toolbar="2" inset="true" toolstyle="true" stack="true" color="#FFDE59" gaugelowcol="red" gaugebackcol="silver" priority="10">
+      <caption>Zmeczenie: @gmcp_fatigue_opis</caption>
+      <expr>@gmcp_fatigue</expr>
+      <gaugemax>9</gaugemax>
+      <gaugelow>3</gaugelow>
+    </button>
+    <button type="Gauge" variable="@gmcp_hp" autosize="false" width="180" height="23" toolbar="2" inset="true" toolstyle="true" stack="true" color="yellow" gaugelowcol="red" gaugebackcol="silver" priority="33">
+      <caption>Kac: @gmcp_headache_opis</caption>
+      <expr>@gmcp_headache</expr>
+      <gaugemax>6</gaugemax>
+      <gaugelow>0</gaugelow>
+    </button>
+    <button type="Gauge" variable="@gmcp_hp" autosize="false" width="180" height="23" toolbar="2" inset="true" toolstyle="true" color="white" gaugelowcol="red" gaugebackcol="silver" priority="38">
+      <caption>Postepy: @gmcp_improve_opis</caption>
+      <value>#send postepy</value>
+      <expr>@gmcp_improve</expr>
+      <gaugemax>15</gaugemax>
+      <gaugelow>0</gaugelow>
+    </button>
+    <button type="Gauge" variable="@gmcp_hp" autosize="false" width="180" height="23" toolbar="2" inset="true" toolstyle="true" color="#339966" gaugelowcol="red" gaugebackcol="silver" priority="30">
+      <caption>Upicie: @gmcp_intox_opis</caption>
+      <expr>@gmcp_intox</expr>
+      <gaugemax>6</gaugemax>
+      <gaugelow>2</gaugelow>
+    </button>
+    <button type="Gauge" variable="@gmcp_hp" autosize="false" width="180" height="23" toolbar="2" inset="true" toolstyle="true" stack="true" color="#49A3D8" gaugelowcol="red" gaugebackcol="silver" priority="18">
+      <caption>Mana: @gmcp_mana_opis</caption>
+      <expr>@gmcp_mana</expr>
+      <gaugemax>8</gaugemax>
+      <gaugelow>3</gaugelow>
+    </button>
+    <button type="Gauge" variable="@gmcp_hp" autosize="false" width="180" height="23" toolbar="2" inset="true" toolstyle="true" stack="true" color="#339966" gaugelowcol="#FFDE59" gaugebackcol="silver" priority="25">
+      <caption>Picie: @gmcp_soaked_opis</caption>
+      <expr>@gmcp_soaked</expr>
+      <gaugemax>3</gaugemax>
+      <gaugelow>3</gaugelow>
+    </button>
+    <button type="Gauge" variable="@gmcp_hp" autosize="false" width="180" height="23" toolbar="2" inset="true" toolstyle="true" color="#339966" gaugelowcol="#FFDE59" gaugebackcol="silver" priority="22">
+      <caption>Jedzenie: @gmcp_stuffed_opis</caption>
+      <expr>@gmcp_stuffed</expr>
+      <gaugemax>3</gaugemax>
+      <gaugelow>3</gaugelow>
+    </button>
+    <button type="Gauge" variable="@gmcp_hp" autosize="false" width="180" height="23" toolbar="2" inset="true" toolstyle="true" color="#339966" gaugelowcol="#FFCC99" gaugebackcol="silver" priority="15">
+      <caption>Panika: @gmcp_panic_opis</caption>
+      <expr>@gmcp_panic</expr>
+      <gaugemax>5</gaugemax>
+      <gaugelow>3</gaugelow>
+    </button>
+    <var name="gmcp_encumbrance" type="String" usedef="true">0</var>
+    <var name="gmcp_encumbrance_opis" type="String" usedef="true">brak</var>
+    <var name="gmcp_fatigue" type="String" usedef="true">9</var>
+    <var name="gmcp_fatigue_opis" type="String" usedef="true">w pelni wypoczety</var>
+    <var name="gmcp_headache" type="String" usedef="true">0</var>
+    <var name="gmcp_headache_opis" type="String" usedef="true">brak</var>
+    <var name="gmcp_hp" type="String" usedef="true">6</var>
+    <var name="gmcp_hp_opis" type="String" usedef="true">w swietnej kondycji</var>
+    <var name="gmcp_improve" type="String" usedef="true">0</var>
+    <var name="gmcp_improve_opis" type="String" usedef="true">minimalne</var>
+    <var name="gmcp_intox" type="String" usedef="true">0</var>
+    <var name="gmcp_intox_opis" type="String" usedef="true">trzezwy</var>
+    <var name="gmcp_mana" type="String" usedef="true">8</var>
+    <var name="gmcp_mana_opis" type="String" usedef="true">w pelni sil</var>
+    <var name="gmcp_panic" type="String" usedef="true">5</var>
+    <var name="gmcp_panic_opis" type="String" usedef="true">bezpiecznie</var>
+    <var name="gmcp_soaked" type="String" usedef="true">1</var>
+    <var name="gmcp_soaked_opis" type="String" usedef="true">chce ci sie pic</var>
+    <var name="gmcp_state" type="Record" usedef="true">
+      <value>hp=6|stuffed=2|improve=0|encumbrance=0|form=3|headache=0|mana=8|panic=0|intox=0|fatigue=0|soaked=1</value>
+      <json>{"stuffed":2,"improve":0,"panic":0,"headache":0,"fatigue":0,"intox":0,"hp":6,"encumbrance":0,"soaked":1,"mana":8,"form":3}</json>
+    </var>
+    <var name="gmcp_stuffed" type="String" usedef="true">2</var>
+    <var name="gmcp_stuffed_opis" type="String" usedef="true">najedzony</var>
+    <trigger type="GMCP" priority="4630">
+      <pattern>char.state</pattern>
+      <value>gmcp_state = %gmcp.char.state
+
+#loopdb @gmcp_state
+{
+  $val = %number(%val)
+  
+  #switch (%key)
+    (fatigue) {$val = %eval(9 - $val)}
+    (panic) {$val = %eval(5 - $val)}
+    
+  $val_o = @opisz_stan(%key, $val)  
+  
+  #variable {"gmcp_"%key} {$val}
+  #variable {"gmcp_"%key"_opis"} {$val_o}
+}</value>
+    </trigger>
+    <func name="opisz_stan">
+      <value>#switch ($stan)
+  (hp) {
+    #switch ($val)
+      (0) {#return "ledwo zywy"}
+      (1) {#return "ciezko ranny"}
+      (2) {#return "w zlej kondycji"}
+      (3) {#return "ranny"}
+      (4) {#return "lekko ranny"}
+      (5) {#return "w dobrym stanie"}
+      (6) {#return "w swietnej kondycji"} 
+  }
+  (mana) {
+    #switch ($val)
+      (8) {#return "w pelni sil"}
+      (7) {#return "lekko oslabiony"}
+      (6) {#return "oslabiony"}
+      (5) {#return "zmeczony"}
+      (4) {#return "bardzo zmeczony"}
+      (3) {#return "w zlej kondycji"}
+      (2) {#return "wyczerpany"}
+      (1) {#return "wykonczony"}
+      (0) {#return "u kresu sil"}
+  }
+  (fatigue) {
+    #switch ($val)
+      (9) {#return "w pelni wypoczety"}
+      (8) {#return "wypoczety"}
+      (7) {#return "troche zmeczony"}
+      (6) {#return "zmeczony"}
+      (5) {#return "bardzo zmeczony"}
+      (4) {#return "nieco wyczerpany"}
+      (3) {#return "wyczerpany"}
+      (2) {#return "bardzo wyczerpany"}
+      (1) {#return "wycienczony"}
+      (0) {#return "calkowicie wycienczony"}
+  }  
+  (panic) {
+    #switch ($val)
+      (5) {#return "bezpiecznie"}
+      (4) {#return "spokojnie"}
+      (3) {#return "nieswojo"}
+      (2) {#return "nerwowo"}
+      (1) {#return "przerazony"}
+      (0) {#return "bardzo przerazony"}
+  }  
+  (intox) {
+    #switch ($val)
+      (10) {#return "pijany jak bela"}
+      (9) {#return "nawalony"}
+      (8) {#return "napruty"}
+      (7) {#return "schlany"}
+      (6) {#return "pijany"}
+      (5) {#return "mocno wstawiony"}
+      (4) {#return "wstawiony"}
+      (3) {#return "podpity"}
+      (2) {#return "lekko podpity"}
+      (1) {#return "podchmielony"}
+      (0) {#return "trzezwy"}
+  }  
+  (improve) {
+    #switch ($val)
+      (15) {#return "niebotyczne"}
+      (14) {#return "gigantyczne"}
+      (13) {#return "wspaniale"}
+      (12) {#return "imponujace"}
+      (11) {#return "ogromne"}
+      (10) {#return "bardzo duze"}
+      (9) {#return "duze"}
+      (8) {#return "znaczne"}
+      (7) {#return "dosc duze"}
+      (6) {#return "spore"}
+      (5) {#return "zadowalajace"}
+      (4) {#return "nieduze"}
+      (3) {#return "male"}
+      (2) {#return "bardzo male"}
+      (1) {#return "nieznaczne"}
+      (0) {#return "minimalne"}
+  }  
+  (soaked) {
+    #switch ($val)
+      (3) {#return "nie chce ci sie pic"}
+      (2) {#return "troche chce ci sie pic"}
+      (1) {#return "chce ci sie pic"}
+      (0) {#return "chce ci sie bardzo pic"}
+  }  
+  (stuffed) {
+    #switch ($val)
+      (3) {#return "bardzo najedzony"}
+      (2) {#return "najedzony"}
+      (1) {#return "glodny"}
+      (0) {#return "bardzo glodny"}
+  }  
+  (headache) {
+    #switch ($val)
+      (0) {#return "brak"}
+      (1) {#return "lekkiego"}
+      (2) {#return "niemilego"}
+      (3) {#return "drazniacego"}
+      (4) {#return "niezlego"}
+      (5) {#return "straszliwego"}
+      (6) {#return "potwornego"}
+  }  
+  (encumbrance) {
+    #switch (6-$val)
+      (6) {#return "brak"}
+      (5) {#return "wadzi ci troche"}
+      (4) {#return "daje ci sie we znaki"}
+      (3) {#return "jest dosyc klopotliwy"}
+      (2) {#return "jest wyjatkowo ciezki"}
+      (1) {#return "jest niemilosiernie ciezki"}
+      (0) {#return "prawie przygniata cie do ziemi"}
+  }  
+  
+  
+#return $val</value>
+      <arglist>$stan, $val</arglist>
+    </func>
+    <var name="gmcp_encumbrance1" type="String">0</var>
+    <var name="gmcp_encumbrance_opis1" type="String">brak</var>
+    <var name="gmcp_form" type="String">3</var>
+    <var name="gmcp_form_opis" type="String">3</var>
+  </class>
+  <class name="Ocena ekwipunku">
+    <var name="o_wywa">wyjatkowo zle|bardzo zle|zle|bardzo kiepsko|kiepsko|przyzwoicie|srednio|niezle|dosc dobrze|dobrze|bardzo dobrze|doskonale|perfekcyjnie|genialnie</var>
+    <var name="o_skut" type="StringList">
+      <value>kompletnie nieskuteczn|strasznie nieskuteczn|bardzo nieskuteczn|raczej nieskuteczn|malo skuteczn|niezbyt skuteczn|raczej skuteczn|dosyc skuteczn|calkiem skuteczn|bardzo skuteczn|niezwykle skuteczn|wyjatkowo skuteczn|zabojczo skuteczn|fantastycznie skuteczn</value>
+      <json>["kompletnie nieskuteczn","strasznie nieskuteczn","bardzo nieskuteczn","raczej nieskuteczn","malo skuteczn","niezbyt skuteczn","raczej skuteczn","dosyc skuteczn","calkiem skuteczn","bardzo skuteczn","niezwykle skuteczn","wyjatkowo skuteczn","zabojczo skuteczn","fantastycznie skuteczn"]</json>
+    </var>
+    <trigger name="Ocena broni" priority="2690">
+      <pattern>^{&gt; |}Twoje doswiadczenie i umiejetnosci podpowiadaja ci, ze jak na (*) jest {on|ona|ono} (*).$</pattern>
+      <value>$temp = "Jak na "%1" jest "@opis_oceny_skutecznosci(%2)"."
+
+#sub $temp</value>
+    </trigger>
+    <var name="o_jzbroi">wyjatkowo zle|bardzo zle|zle|bardzo kiepsko|kiepsko|przyzwoicie|niezle|dosc dobrze|dobrze|bardzo dobrze|doskonale|perfekcyjnie</var>
+    <trigger name="Ocena zbroi" priority="3840">
+      <pattern>^{&gt; |}Twoje doswiadczenie i umiejetnosci podpowiadaja ci, ze jak na (*) zbroje chroni{|a} {on|ona|one} (*).$</pattern>
+      <value>$temp = %proper(%1) zbroja. Chroni @opis_oceny_zbroi(%2).
+
+#sub $temp</value>
+    </trigger>
+    <func name="opis_oceny_zbroi">
+      <value>#return %subregex($a, "("@o_jzbroi")", "\1 (%ismember(\1, "@o_jzbroi")/%numitems("@o_jzbroi"))")</value>
+      <arglist>$a</arglist>
+    </func>
+    <trigger name="Ocena tarcz" priority="3980">
+      <pattern>^{&gt; |}Twoje doswiadczenie i umiejetnosci podpowiadaja ci, ze chroni ona (*). Ponadto jest (*) w parowaniu ciosow.</pattern>
+      <value>$temp = "Tarcza ta chroni "@opis_oceny_zbroi(%1). Ponadto jest @opis_oceny_skutecznosci(%2) w parowaniu ciosow.
+
+#sub $temp</value>
+    </trigger>
+    <func name="opis_oceny_skutecznosci">
+      <value>$a = %subregex($a, "("@o_wywa")" "(\w+)", "\1 \2 (%ismember(\1, "@o_wywa")/%numitems("@o_wywa"))")
+$a = %subregex($a, "("@o_skut")"(.), "\1\2 (%ismember(\1, "@o_skut")/%numitems("@o_skut"))")
+
+#return $a</value>
+      <arglist>$a</arglist>
+    </func>
+  </class>
+  <class name="Poczta">
+    <trigger type="GMCP" priority="2650">
+      <pattern>mail.state</pattern>
+      <value>$mail_gmcp = %json(%0)
+
+#switch ($mail_gmcp.unread)
+  ("false") {poczta = "PRZECZYTANA"}
+  ("true") {poczta = "NIEPRZECZYTANA"}</value>
+    </trigger>
+    <var name="poczta" type="Literal">PRZECZYTANA</var>
+    <func name="kolor_poczty">
+      <value>#switch (%1)
+  ("PRZECZYTANA") {#RETURN green}
+  ("NIEPRZECZYTANA") {#return red}</value>
+    </func>
+  </class>
+  <class name="Rysowanie wyjsc">
+    <button type="Toggle" variable="@rysuj" autosize="false" width="20" height="23" autopos="false" left="-1" toolbar="2" image="DIRECTION" priority="670">
+      <tooltip>Rysowanie wyjsc</tooltip>
+      <button/>
+    </button>
+    <var name="rysuj">1</var>
+    <var name="exits" type="StringList">
+      <value>poludniowy-wschod</value>
+      <json>["poludniowy-wschod"]</json>
+    </var>
+    <var name="wyjscia" type="StringList">
+      <value>W gestych ciemnosciach dostrzegasz trakt wiodacy na|Trakt wiedzie na|Trakt rozgalezia sie na|W gestych ciemnosciach dostrzegasz, ze trakt rozgalezia sie na|Wedrowke przez rozlegle laki mozesz kontynuowac udajac sie na|Mozesz stad poplynac na|Szlak prowadzi tutaj w|Sciezka wiedzie na</value>
+      <json>["W gestych ciemnosciach dostrzegasz trakt wiodacy na","Trakt wiedzie na","Trakt rozgalezia sie na","W gestych ciemnosciach dostrzegasz, ze trakt rozgalezia sie na","Wedrowke przez rozlegle laki mozesz kontynuowac udajac sie na","Mozesz stad poplynac na","Szlak prowadzi tutaj w","Sciezka wiedzie na"]</json>
+    </var>
+    <trigger priority="290">
+      <pattern>^{@wyjscia}</pattern>
+      <value>exits = @GMCP_ROOM_INFO.exits
+$rysunek = %if(%ismember("polnocny-zachod", @exits), "\", " ")" "%if(%ismember("polnoc", @exits), "|", " ")" "%if(%ismember("polnocny-wschod", @exits), "/", " ")" "%if(%ismember("gora", @exits), "U", " ")
+$rysunek2 = %if(%ismember("zachod", @exits), "-", " ")" O "%if(%ismember("wschod", @exits), "-", " ")" "
+$rysunek3 = %if(%ismember("poludniowy-zachod", @exits), "/", " ")" "%if(%ismember("poludnie", @exits), "|", " ")" "%if(%ismember("poludniowy-wschod", @exits), "\", " ")" "%if(%ismember("dol", @exits), "D", " ")
+#if (@rysuj = 1) {
+  #say $rysunek
+  #say $rysunek2
+  #say $rysunek3
+  }</value>
+    </trigger>
+    <trigger priority="120">
+      <pattern>^{Jest|Sa} tutaj * widoczn{ych|e} wyjsc{|ie|ia}:</pattern>
+      <value>exits = %gmcp.room.info.exits
+$rysunek = %if(%ismember("polnocny-zachod", @exits), "\", " ")" "%if(%ismember("polnoc", @exits), "|", " ")" "%if(%ismember("polnocny-wschod", @exits), "/", " ")" "%if(%ismember("gora", @exits), "U", " ")
+$rysunek2 = %if(%ismember("zachod", @exits), "-", " ")" O "%if(%ismember("wschod", @exits), "-", " ")" "
+$rysunek3 = %if(%ismember("poludniowy-zachod", @exits), "/", " ")" "%if(%ismember("poludnie", @exits), "|", " ")" "%if(%ismember("poludniowy-wschod", @exits), "\", " ")" "%if(%ismember("dol", @exits), "D", " ")
+#if (@rysuj = 1) {
+  #say $rysunek
+  #say $rysunek2
+  #say $rysunek3
+  }</value>
+    </trigger>
+  </class>
+  <class name="Zaslananie i wycofywanie">
+    <alias name="za">
+      <value>#if (%1 &lt; 20) {
+  #send za ob_%item(@druzyna, %1)
+} {
+  #send za %-1
+}</value>
+    </alias>
+    <var name="druzyna" type="Record">
+      <value>3=717087|2=688186|1=701809</value>
+      <json>{"3":717087,"2":688186,"1":701809}</json>
+    </var>
+  </class>
+  <class name="Zaslony grupowe">
+    <macro key="F6">
+      <value>opcje grupa 2</value>
+    </macro>
+    <macro key="F5">
+      <value>opcje grupa 1</value>
+    </macro>
+    <macro key="F7">
+      <value>opcje grupa 3</value>
+    </macro>
+    <macro key="F8">
+      <value>opcje grupa 4</value>
+    </macro>
+    <trigger priority="7660">
+      <pattern>Zaslona przed GRUPA:                    (*)</pattern>
+      <value>#switch (%1)
+  (Wylaczona) {zaslona = 1}
+  (2) {zaslona = 2}
+  (3) {zaslona = 3}
+  (4) {zaslona = 4}</value>
+    </trigger>
+    <var name="zaslona">2</var>
+  </class>
+  <stat name="Zmienne na pasku" priority="3700">
+    <value>Poczta: %ansi(@kolor_poczty(@poczta))@poczta%ansi(reset)      Zaslona: %ansi(red)@zaslona%ansi(reset)      Q: %ansi(red)@q%ansi(reset)      F12: %ansi(red)@F12%ansi(reset)</value>
+  </stat>
+  <event event="onConnect" priority="530">
+    <value>#log Logi\%time("yyyy-mm-dd")</value>
+  </event>
+</cmud>
