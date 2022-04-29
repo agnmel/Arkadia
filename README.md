@@ -30,7 +30,7 @@ Klawisz `F12` reagujący na sugestywny tekst w grze typu "Ktoś przeciska się p
 Uwagi: Aby dodać kolejny bind, który jest jedną komendą, wystarczy w triggerze napisać: `dodaj_bind "treść bindu"`. Jeśli jednak bind ma zawierać więcej komend, polecam skorzystać ze wzoru:
 ```
 #say {%ansi(15) >> F12 - co robi bind}
-#key F12 {@F12;#key f12 {#say {%ansi(15) ">> F12 - Pusty bind"}};F12 = "Pusto!"}
+#key F12 {wykonanie komendy1;wykonanie komendy2;#key f12 {#say {%ansi(15) ">> F12 - Pusty bind"}};F12 = "Pusto!"}
 ```
 ### Alias q
 Celem komendy `alias q treść komendy` jest utworzenie szybkiego skrótu potrzebnego w tymczasowej sytuacji. Dlatego też to, co pod nim się kryje, wyświetlane jest na pasku stanu po pierwszej zmianie tego aliasu.
