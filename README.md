@@ -65,7 +65,7 @@ Poprzez komendę `gps_tworz` przypisujesz bądź nadpisujesz istniejące powiąz
 - `F2` przełamanie zasłoniętego celu ataku
 -  `KEY5` zerknij
 -  `MULT` k wszystkich
--  `~` przestań zasłaniać
+-  `` ` `` przestań zasłaniać
 ### Wyróżniony tekst innym kolorem niż wysyłany z gry
 - Przedmioty magiczne (jasnozielony)
 - Klucze do skarbców (pomarańczowy)
