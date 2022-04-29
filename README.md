@@ -2,8 +2,8 @@
 Skrypty, które tu publikuję, nie były tworzone z myślą o wygodnym graniu od razu po instalacji. Nie zawierają mapy, dostosowanych kolorów ani fontu. Ilość wprowadzonych bindów, podświetlonych kluczy i artefaktów również jest niekompletna i wymaga uzupełnienia. Są jednak według mnie dobrą podstawą do wygodnego rozszerzenia we własnym zakresie. Mogą również posłużyć jako źródło przykładów, jak napisać dany fragment skryptu w programie CMUD. Można je określić jako sporą modyfikację paczki udostępnionej przez Zurwena, od której zaczynałam je pisać. Niektóre sygnały dźwiękowe zapożyczyłam z paczki stworzonej przez Cerdina. Starałam się, aby każda funkcjonalność mieściła się w odrębnym folderze, ale pomimo tego istnieją wyjątki, które reagują np. z funkcjami umieszczonymi w *obsłudze okna kondycji*. Kod nie zawiera żadnych fragmentów zapisanych w jezyku programowania Lua.
 ## Instalacja
 1. Ściągnij i rozpakuj repozytorium
-2. Stwórz nową sesję w programie CMUD. *Title* nie ma znaczenia, wybierz coś jeszcze nie stworzonego (np. Skrypty_Agi). Host: arkadia.rpg.pl, Port 23. W zakładce *Package Files* zwróć uwagę na utworzoną ścieżkę (*Path*) - w następnych krokach wrzucisz tam dwa foldery.
-3. Otworz sesje offline.
+2. Stwórz nową sesję w programie CMUD. *Title* nie ma znaczenia, wybierz coś jeszcze nie stworzonego (np. Skrypty_Agi). Host: arkadia.rpg.pl, Port 23. W zakładce *Package Files* zwróć uwagę na utworzoną ścieżkę (*Path*) - w następnych krokach wrzucisz tam dwa foldery
+3. Otworz sesje offline
 4. W *Options* -> *General* -> *Protocols* dodaj poniższe linie (całość powinna prezentować się w taki sposób):
 ```
 Core 1
@@ -16,7 +16,7 @@ Mail 1
 ```
 5. W *Settings* -> *File* -> *Import XML* wybierz plik `Skrypty_Agi.xml` z rozpakowanego repozytorium
 6. Otwórz folder sesji (czyli wcześniejszą wypisaną ścieżkę w kreatorze sesji) i dodaj do niego folder /Dzwieki z rozpakowanego repozytorium oraz stwórz pusty folder /Logi
-7. Wybierz *File* -> *Reconnect* aby połączyć się z grą. Po zalogowaniu się powinno pojawić się dodatkowe okno kondycji osób na lokacji.
+7. Wybierz *File* -> *Reconnect* aby połączyć się z grą. Po zalogowaniu się powinno pojawić się dodatkowe okno kondycji osób na lokacji
 ## Zawartość
 ### Atak
 Przycisk `A`/`AW`/`AWR`/`AWRP` (atak, wskazanie, rozkaz, przedstawienie) znajdujący się na panelu wpływa na działanie aliasu `z [kogo]` dodając wcześniej wymienione komendy.
